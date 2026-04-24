@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mood Music & Lighting Sync</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Vibe Background Overlay -->
+        <div class="vibe-overlay" id="vibeOverlay"></div>
+
+        <header>
+            <h1>MoodSync</h1>
+            <p>AI-Powered Environment Sync</p>
+        </header>
+
+        <main>
+            <div class="video-container glass-panel">
+                <video id="webcam" autoplay playsinline></video>
+                <div class="scanner" id="scanner"></div>
+                <div class="overlay-ui">
+                    <span class="status-badge" id="cameraStatus">Camera Active</span>
+                    <button id="analyzeBtn" class="primary-btn">Analyze My Mood</button>
+                </div>
+            </div>
+
+            <div class="results-container glass-panel" id="resultsPanel">
+                <div class="result-section">
+                    <h3>Current Mood</h3>
+                    <p id="moodText">Waiting for analysis...</p>
+                </div>
+
+                <div class="result-section">
+                    <h3>Suggested Lyria 3 Track</h3>
+                    <p id="trackText">Ready to suggest focus music.</p>
+                    
+                    <!-- Mock Audio Player -->
+                    <div class="mock-audio-player">
+                        <button class="play-btn" id="playBtn">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        </button>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <span class="time-display">0:00 / 0:30</span>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h3>Room Vibe</h3>
+                    <div class="color-display">
+                        <div class="color-swatch" id="colorSwatch"></div>
+                        <span id="colorHex">#121212</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Hidden canvas for capturing images -->
+    <canvas id="snapshotCanvas" style="display: none;"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>
