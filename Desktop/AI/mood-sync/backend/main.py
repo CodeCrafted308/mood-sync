@@ -1,6 +1,7 @@
 import os
 import base64
 import json
+import asyncio
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -51,29 +52,38 @@ async def analyze_mood(payload: ImagePayload):
         prompt = """
         Analyze this image of a person working. 
         What is their mood? 
-        Recommend a specific 30-second "Lyria 3" style music track to boost their focus based on their mood.
+        Recommend a specific real-world song to boost their focus based on their mood.
         Also provide a HEX color code that matches this vibe.
         
         Your response MUST be a valid JSON object with the following keys:
         - "mood_analysis": A short 1-2 sentence description of the user's mood and state.
-        - "lyria_track_suggestion": A description of the suggested Lyria 3 focus track (e.g., "Ambient lo-fi beats with a gentle bassline").
+        - "song_suggestion": A specific real-world song recommendation (e.g., "Weightless by Marconi Union").
         - "hex_color": A valid CSS hex color code (e.g., "#1E90FF") that represents the vibe.
+        - "mood_category": A single word categorization of the mood. MUST be exactly one of: "happy", "sad", "focused", "energetic", "relaxed".
         """
-        
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=[
-                types.Part.from_bytes(data=image_bytes, mime_type='image/jpeg'),
-                prompt,
-            ],
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-            ),
-        )
-        
-        # Parse the JSON response
-        result_json = json.loads(response.text)
-        return result_json
+        # Retry logic for 503 Overloaded errors
+        max_retries = 2
+        for attempt in range(max_retries):
+            try:
+                response = client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=[
+                        types.Part.from_bytes(data=image_bytes, mime_type='image/jpeg'),
+                        prompt,
+                    ],
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                    ),
+                )
+                # Parse the JSON response
+                result_json = json.loads(response.text)
+                return result_json
+            except Exception as e:
+                if "503" in str(e) and attempt < max_retries - 1:
+                    print(f"API overloaded (503). Retrying in 2 seconds... (Attempt {attempt+1}/{max_retries})")
+                    await asyncio.sleep(2)
+                else:
+                    raise e # Re-raise to be caught by the outer block
         
     except Exception as e:
         print(f"Error during analysis: {e}")
@@ -82,8 +92,9 @@ async def analyze_mood(payload: ImagePayload):
         # Fallback Mock Response so the UI still functions for testing
         mock_response = {
             "mood_analysis": "You look like you're deeply focused but could use a burst of energy! (MOCK DATA - Check API Key)",
-            "lyria_track_suggestion": "Upbeat synthwave with a driving bassline to keep the momentum going.",
-            "hex_color": "#FF007F"
+            "song_suggestion": "Blinding Lights by The Weeknd",
+            "hex_color": "#FF007F",
+            "mood_category": "focused"
         }
         return mock_response
 

@@ -20,9 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let isPlaying = false;
     let audioInterval;
     
-    // Add placeholder audio
-    const placeholderAudio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-    placeholderAudio.loop = true;
+    // Add placeholder audio tracks mapped to moods
+    const audioTracks = {
+        'happy': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // Upbeat and happy
+        'sad': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', // Slower, melancholy
+        'focused': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Steady, ambient
+        'energetic': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', // Fast, high energy
+        'relaxed': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' // Chill, slow
+    };
+    let currentAudio = new Audio(audioTracks['focused']);
+    currentAudio.loop = true;
 
     // Initialize Webcam
     async function initCamera() {
@@ -51,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlaying = !isPlaying;
         
         if (isPlaying) {
-            placeholderAudio.play().catch(e => console.log("Audio play blocked by browser:", e));
+            currentAudio.play().catch(e => console.log("Audio play blocked by browser:", e));
             playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
             let progress = 0;
             audioInterval = setInterval(() => {
@@ -60,14 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     progress = 0;
                     isPlaying = false;
                     clearInterval(audioInterval);
-                    placeholderAudio.pause();
-                    placeholderAudio.currentTime = 0;
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
                     playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
                 }
                 progressBar.style.width = `${progress}%`;
             }, 100);
         } else {
-            placeholderAudio.pause();
+            currentAudio.pause();
             playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
             clearInterval(audioInterval);
         }
@@ -108,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Update UI with results
             moodText.textContent = data.mood_analysis;
-            trackText.textContent = data.lyria_track_suggestion;
+            trackText.textContent = data.song_suggestion;
             
             // Update Vibe Color
             const hex = data.hex_color;
@@ -120,6 +127,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.documentElement.style.setProperty('--vibe-color', hex);
             document.documentElement.style.setProperty('--accent-color', hex);
             vibeOverlay.style.opacity = '0.3';
+            
+            // Select a new audio track based on the mood category
+            const category = data.mood_category || 'focused';
+            currentAudio.src = audioTracks[category] || audioTracks['focused'];
             
             // Reset audio player if playing
             if (isPlaying) playBtn.click();

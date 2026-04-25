@@ -62,7 +62,7 @@ Mood Sync is a real-time web application that monitors your facial expressions v
    ```
 
 2. **Access the application:**
-   Open your browser and navigate to `http://localhost:8000`. The FastAPI server serves the static frontend files directly.
+   Open your browser and navigate to ``. The FastAPI server serves the static frontend files directly.
 
 3. **Analyze your mood:**
    - Grant the browser permission to access your webcam.
@@ -73,6 +73,7 @@ Mood Sync is a real-time web application that monitors your facial expressions v
 
 1. The frontend captures a frame from the webcam feed and converts it to a base64 encoded JPEG.
 2. This image is sent via a POST request to the FastAPI `/api/analyze` endpoint.
-3. The backend constructs a prompt and passes the image to the `gemini-2.5-flash` model via the GenAI SDK.
+3. The backend constructs a prompt and passes the image to the `gemini-3.0-flash` model via the GenAI SDK.
 4. The AI returns a structured JSON payload containing the mood description, music suggestion, and HEX color.
 5. The frontend parses this JSON and dynamically updates the DOM and CSS variables to reflect the new vibe.
+http://localhost:8000
