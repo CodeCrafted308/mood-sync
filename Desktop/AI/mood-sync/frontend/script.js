@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Result elements
     const moodText = document.getElementById('moodText');
     const trackText = document.getElementById('trackText');
+    const genreText = document.getElementById('genreText');
+    const tempoText = document.getElementById('tempoText');
+    const toneText = document.getElementById('toneText');
     const colorSwatch = document.getElementById('colorSwatch');
     const colorHex = document.getElementById('colorHex');
     const vibeOverlay = document.getElementById('vibeOverlay');
@@ -24,11 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const audioTracks = {
         'happy': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // Upbeat and happy
         'sad': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', // Slower, melancholy
-        'focused': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Steady, ambient
-        'energetic': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', // Fast, high energy
-        'relaxed': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' // Chill, slow
+        'angry': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', // Intense, high energy
+        'neutral': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', // Lo-fi / downtempo vibe
+        'anxious': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Calm, meditative
     };
-    let currentAudio = new Audio(audioTracks['focused']);
+    let currentAudio = new Audio(audioTracks['neutral']);
     currentAudio.loop = true;
 
     // Initialize Webcam
@@ -116,6 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update UI with results
             moodText.textContent = data.mood_analysis;
             trackText.textContent = data.song_suggestion;
+            genreText.textContent = `Genre: ${data.music_genre}`;
+            tempoText.textContent = `Tempo: ${data.tempo_bpm}`;
+            toneText.textContent = `Tone / Key: ${data.tone_or_key}`;
             
             // Update Vibe Color
             const hex = data.hex_color;
@@ -129,8 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
             vibeOverlay.style.opacity = '0.3';
             
             // Select a new audio track based on the mood category
-            const category = data.mood_category || 'focused';
-            currentAudio.src = audioTracks[category] || audioTracks['focused'];
+            const category = data.mood_category || 'neutral';
+            currentAudio.src = audioTracks[category] || audioTracks['neutral'];
             
             // Reset audio player if playing
             if (isPlaying) playBtn.click();
