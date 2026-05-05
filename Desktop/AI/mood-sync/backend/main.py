@@ -15,10 +15,15 @@ load_dotenv(os.path.join(pathlib.Path(__file__).parent.parent, ".env"))
 
 app = FastAPI()
 
-# Enable CORS for local dev
+# Enable CORS - Allow both local dev and production frontend URLs
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+        "https://mood-sync.onrender.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
