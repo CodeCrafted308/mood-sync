@@ -132,8 +132,10 @@ async def analyze_mood(payload: ImagePayload):
         }
         return mock_response
 
-@app.post("/predict")
-async def predict(payload: ImagePayload):
+@app.api_route("/predict", methods=["GET", "POST", "OPTIONS"])
+async def predict(payload: ImagePayload = None):
+    if payload is None:
+        return {"detail": "Send a POST request with image_base64 at /predict or /api/analyze."}
     return await analyze_mood(payload)
 
 # Mount frontend static files
