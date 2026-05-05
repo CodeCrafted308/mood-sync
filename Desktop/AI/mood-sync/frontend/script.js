@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const base64Image = canvas.toDataURL('image/jpeg', 0.8);
 
         try {
-            const response = await fetch('/api/analyze', {
+            const response = await fetch('https://mood-sync.onrender.com/api/analyze', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
