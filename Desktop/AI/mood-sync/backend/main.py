@@ -23,6 +23,7 @@ app.add_middleware(
         "http://localhost:8000",
         "http://127.0.0.1:8000",
         "https://mood-sync.onrender.com",
+        "https://mood-sync-frontend.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
