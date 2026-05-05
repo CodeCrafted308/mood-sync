@@ -111,7 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                throw new Error(`Server responded with ${response.status}`);
+                const serverText = await response.text().catch(() => null);
+                const message = serverText
+                    ? `Server responded with ${response.status}: ${serverText}`
+                    : `Server responded with ${response.status}`;
+                throw new Error(message);
             }
 
             const data = await response.json();
@@ -144,7 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error("Analysis Error:", error);
-            moodText.textContent = "Error analyzing mood. Check console and API keys.";
+            const errorMessage = error instanceof Error ? error.message : "Unexpected error";
+            moodText.textContent = `Analysis error: ${errorMessage}`;
         } finally {
             analyzeBtn.disabled = false;
             analyzeBtn.textContent = "Analyze My Mood";

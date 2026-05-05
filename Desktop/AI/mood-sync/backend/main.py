@@ -22,8 +22,8 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
-        "https://mood-sync.onrender.com/predict",
         "https://mood-sync-frontend.onrender.com",
+        "https://mood-sync-1.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -131,6 +131,10 @@ async def analyze_mood(payload: ImagePayload):
             "mood_category": "happy"
         }
         return mock_response
+
+@app.post("/predict")
+async def predict(payload: ImagePayload):
+    return await analyze_mood(payload)
 
 # Mount frontend static files
 # We mount this at the root so that / serves index.html
